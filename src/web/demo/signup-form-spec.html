@@ -1,0 +1,33 @@
+<html>
+
+  <head>
+      <title>signup-form-spec</title>
+      <meta name="viewport" content="width=device-width">
+      <link rel="import" href="../signup-form.html">
+      <script src="../../../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  </head>
+  <body>
+      <signup-form id="signup"></signup-form>
+      <script>
+          var loyaltiesProperties = {
+              title: "Test Title",
+              titleDescription: "It's quick and easy, but remember this is only a test.",
+              mobilePhoneLabel: "Mobile Phone",
+              mobilePhoneFormat: "xxx-xxx-xxxxx",
+              smsOptInLabel: "Please send me some quirky text messages.",
+              birthdayLabel: "Birthday",
+              birthdayFormat: "mm/dd/yyyy",
+              birthdayDescription: "* This is so we can send an awesome gift on your birthday",
+              preferredLanguagesLabel: "Preferred Language",
+              preferredLanguages: "English,Vietnamese,Chinese,French,Japanese,Spanish,Cantonese,Russian",
+              termsCheckedLabel: "I accept the <a href='#'>Terms of Use</a> and <a href='#'>Privacy Policy</a>",
+              submitLabel: "JOIN NOW",
+              cancelLabel: "CANCEL",
+              testMode: true
+          };
+
+          var loyaltiesSignupElement = document.getElementById("signup");
+          loyaltiesSignupElement.ready(loyaltiesProperties);
+      </script>
+  </body>
+</html>

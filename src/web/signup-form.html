@@ -1,0 +1,252 @@
+<link rel="import" href="../../node_modules/@polymer/polymer/polymer-element.html">
+
+<dom-module id='signup-form'>
+    <template>
+        <style>
+            #main {
+                display: flex;
+                justify-content: center;
+            }
+
+            .flex-container {
+                display: flex;
+                flex-direction: column;
+                flex-wrap: wrap;
+                align-items: center;
+                width: 50%;
+                padding: 1em;
+                font-family: Arial,Helvetica,sans-serif;
+                font-weight: normal;
+            }
+
+            .flex-row {
+                box-sizing: border-box;
+                border: none;
+                margin-bottom: 10px;
+                margin-top: 10px;
+                width: 80%;
+            }
+
+			.flex-row h3 {
+                display: block;
+                font-family: "Arial", sans-serif;
+                font-weight: bold;
+            }
+
+            .label {
+                font-weight: bold;
+            }
+
+            p.caption {
+                font-size: 0.75em;
+            }
+
+            .flex-row input[type="text"], select {
+                width: 30%;
+                padding: 5px;
+            }
+
+
+            /* ===== Begin responsive design ======== */
+
+            @media (max-width: 500px) {
+                .flex-container {
+                    font-size: 1em;
+                    width: 85%;
+                }
+                .flex-row {
+                    width: 95%;
+                }
+                .flex-row input[type="text"] {
+                    width: 100%;
+                }
+                .flex-row h3 {
+                    font-size: 1em;
+                }
+            }
+
+            /* ===== End responsive design ======== */
+        </style>
+
+        <form id="main">
+            <div class="flex-container">
+                <div id="header" class="flex-row">
+                    <h3>[[title]]</h3>
+                    <p>[[titleDescription]]</p>
+                </div>
+                <div class="flex-row">
+                    <label for="mobilePhone">{{mobilePhoneLabel}}</label>
+                    <br/>
+                    <input type="tel" id="mobilePhone" name="mobilePhone" placeholder="{{mobilePhoneFormat}}">{{mobilePhone}}</input>
+                </div>
+                <div class="flex-row">
+                    <input type="checkbox" id="smsOptIn" name="smsOptIn"></input>
+                    <label for="smsOptIn">{{smsOptInLabel}}</label>
+                </div>
+                <div class="flex-row">
+                    <label for="birthDay">{{birthDayLabel}}</label>
+                    <br/>
+                    <input type="date" id="birthDay" name="birthDay" placeholder="{{birthDayFormat}}">{{birthDay}}</input>
+                    <p class="caption">{{birthDayDescription}}</p>
+                </div>
+                <div class="flex-row">
+                    <label for="preferredLanguages">{{preferredLanguagesLabel}}</label>
+                    <br/>
+                    <select value="{{preferredLanguage::change}}" name="preferredLanguages" id="preferredLanguages">
+                        <template is="dom-repeat" items="[[preferredLanguages]]" as="preferredLanguage">
+                            <option value="[[preferredLanguage]]">[[preferredLanguage]]</option>
+                        </template>
+                    </select>
+                </div>
+                <!-- Polymer doesn't seem to do as well as expression book keeping as Angular.
+                The following nested dom-if is a logical AND work around. -->
+                <template is="dom-if" if="[[testMode]]">
+                    <template is="dom-if" if="[[preferredLanguage]]">
+                        <div class="flex-row">
+                            Preferred Language: [[preferredLanguage]]
+                        </div>
+                    </template>
+                </template>
+                <div class="flex-row">
+                    <input type="checkbox" id="termsChecked" name="termsChecked" required></input>
+                    <label for="termsChecked" inner-h-t-m-l="[[termsCheckedLabel]]"></label>
+                </div>
+                <div class="flex-row">
+                    <input type="submit" value="{{submitLabel}}" onclick="javascript:alert('route undefined')"></input>
+                    <input type="button" value="{{cancelLabel}}" onclick="javascript:alert('route undefined')"></input>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <script>
+        class SignupForm extends Polymer.Element {
+            static get is() {
+                return 'signup-form';
+            }
+
+            static get config() {
+                return {
+                    properties: {
+                        testMode: {
+                            type: Boolean,
+                            value: false
+                        },
+                        // Members:
+                        title: {
+                            type: String,
+                            value: 'JOIN THE NUSKIN LOYALTY PROGRAM'
+                        },
+                        titleDescription: {
+                            type: String,
+                            value: "It's quick and easy, plus flexible use of points for shipping, product, samples, branded items, experiences, and donations."
+                        },
+                        mobilePhoneLabel: {
+                            type: String,
+                            value: 'Mobile Phone'
+                        },
+                        mobilePhoneFormat: {
+                            type: String,
+                            value: 'xx-xxxxxxxx' // Australian format for kicks
+                        },
+                        mobilePhone: String,
+                        smsOptIn: {
+                            type: Boolean,
+                            value: false
+                        },
+                        smsOptInLabel: {
+                            type: String,
+                            value: 'Yes, contact me through SMS Text messages when needed'
+                        },
+                        birthDay: Date,
+                        birthDayLabel: {
+                            type: String,
+                            value: 'Birthday'
+                        },
+                        birthDayFormat: {
+                            type: String,
+                            value: 'MM/DD/YY'
+                        },
+                        birthDayDescription: {
+                            type: String,
+                            value: '* This is so we can send a gift on your birthday'
+                        },
+                        preferredLanguagesLabel: {
+                            type: String,
+                            value: 'Preferred Language'
+                        },
+                        preferredLanguages: {
+                            type: Array,
+                            value: ['English', 'Vietnamese', 'Chinese', 'French', 'Japanese']
+                        },
+                        preferredLanguage: {
+                            type: String,
+                            value: "",
+                            observer: 'setPreferredLanguage'
+                        },
+                        termsCheckedLabel: {
+                            type: String,
+                            value: "I accept the <a href='#'>Terms of Use</a> and <a href='#'>Privacy Policy</a>"
+                        },
+                        termsChecked: {
+                            type: Boolean,
+                            value: false
+                        },
+                        submitLabel: {
+                            type: String,
+                            value: 'JOIN NOW'
+                        },
+                        cancelLabel: {
+                            type: String,
+                            value: 'CANCEL'
+                        }
+                    }
+                }
+            }
+
+            constructor() {
+                super();
+            }
+
+            ready(properties) {
+                super.ready();
+                if (!properties) return;
+                // If the properties are defined set them else unset them.
+                this.testMode = properties.testMode || false;
+                this.title = properties.title || this.title;
+                this.titleDescription = properties.titleDescription || this.titleDescription;
+                this.mobilePhoneLabel = properties.mobilePhoneLabel || this.mobilePhoneLabel;
+                this.mobilePhoneFormat = properties.mobilePhoneFormat || this.mobilePhoneFormat;
+                this.mobilePhone = properties.mobilePhone || this.mobilePhone;
+                this.smsOptIn = properties.smsOptIn || this.smsOptIn;
+                this.smsOptInLabel = properties.smsOptInLabel || this.smsOptInLabel;
+                this.birthDay = properties.birthDay || this.birthDay;
+                this.birthDayLabel = properties.birthDayLabel || this.birthDayLabel;
+                this.birthDayFormat = properties.birthDayFormat || this.birthDayFormat;
+                this.birthDayDescription = properties.birthDayDescription || this.birthDayDescription;
+                this.preferredLanguagesLabel = properties.preferredLanguagesLabel || this.preferredLanguagesLabel;
+
+                if (properties.preferredLanguages && typeof properties.preferredLanguages === 'string') {
+                    let preferredLanguages = properties.preferredLanguages;
+                    this.preferredLanguages = preferredLanguages.split(",");
+                }
+
+                this.preferredLanguage = properties.preferredLanguage || this.preferredLanguage;
+                this.termsCheckedLabel = properties.termsCheckedLabel || this.termsCheckedLabel;
+                this.termsChecked = properties.termsChecked || this.termsChecked;
+                this.submitLabel = properties.submitLabel || this.submitLabel;
+                this.cancelLabel = properties.cancelLabel || this.cancelLabel;
+            }
+
+            setPreferredLanguage(preferredLanguage) {
+                if (preferredLanguage) {
+                    this.preferredLanguage = preferredLanguage;
+                }
+            }
+
+        }
+
+        customElements.define(SignupForm.is, SignupForm);
+    </script>
+</dom-module>
+

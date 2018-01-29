@@ -1,4 +1,7 @@
-<link rel="import" href="../../node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="/node_modules/@polymer/polymer/polymer-element.html">
+<link rel="import" href="/node_modules/@polymer/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="/node_modules/@polymer/polymer/lib/mixins/gesture-event-listeners.html">
+<link rel="stylesheet" href="/node_modules/flexboxgrid/css/flexboxgrid.min.css">
 
 <dom-module id='signup-form'>
     <template>
@@ -68,31 +71,48 @@
             /* ===== End responsive design ======== */
         </style>
 
-        <form id="main">
+        <!-- Main Form -->
+        <form id="main" method="get" on-submit="submitForm">
             <div class="flex-container">
                 <div id="header" class="flex-row">
                     <h3>[[title]]</h3>
                     <p>[[titleDescription]]</p>
                 </div>
                 <div class="flex-row">
-                    <label for="mobilePhone">{{mobilePhoneLabel}}</label>
+                    <label for="firstName">First Name:</label>
                     <br/>
-                    <input type="tel" id="mobilePhone" name="mobilePhone" placeholder="{{mobilePhoneFormat}}">{{mobilePhone}}</input>
+                    <input type="text" id="firstName" name="firstName" required>{{firstName}}</input>
                 </div>
                 <div class="flex-row">
-                    <input type="checkbox" id="smsOptIn" name="smsOptIn"></input>
-                    <label for="smsOptIn">{{smsOptInLabel}}</label>
+                    <label for="lastName">Last Name:</label>
+                    <br/>
+                    <input type="text" id="lastName" name="lastName" required>{{lastName}}</input>
+                </div>
+                <div class="flex-row">
+                    <label for="age">Age:</label>
+                    <br/>
+                    <input type="number" id="age" name="age" min="18" max="130" placeholder="18" required>{{age}}</input>
+                </div>
+                <div class="flex-row">
+                    <label for="mobilePhone">{{mobilePhoneLabel}}</label>
+                    <br/>
+                    <input type="tel" id="mobilePhone" name="mobilePhone" placeholder="{{mobilePhoneFormat}}" required>{{mobilePhone}}</input>
+                </div>
+                <div class="flex-row">
+                    <label for="smsOptIn">
+                        <input type="checkbox" id="smsOptIn" name="smsOptIn"/>&nbsp;{{smsOptInLabel}}
+                    </label>
                 </div>
                 <div class="flex-row">
                     <label for="birthDay">{{birthDayLabel}}</label>
                     <br/>
-                    <input type="date" id="birthDay" name="birthDay" placeholder="{{birthDayFormat}}">{{birthDay}}</input>
+                    <input type="date" id="birthDay" name="birthDay" placeholder="{{birthDayFormat}}" required>{{birthDay}}</input>
                     <p class="caption">{{birthDayDescription}}</p>
                 </div>
                 <div class="flex-row">
                     <label for="preferredLanguages">{{preferredLanguagesLabel}}</label>
                     <br/>
-                    <select value="{{preferredLanguage::change}}" name="preferredLanguages" id="preferredLanguages">
+                    <select value="{{preferredLanguage}}" name="preferredLanguages" id="preferredLanguages">
                         <template is="dom-repeat" items="[[preferredLanguages]]" as="preferredLanguage">
                             <option value="[[preferredLanguage]]">[[preferredLanguage]]</option>
                         </template>
@@ -112,8 +132,7 @@
                     <label for="termsChecked" inner-h-t-m-l="[[termsCheckedLabel]]"></label>
                 </div>
                 <div class="flex-row">
-                    <input type="submit" value="{{submitLabel}}" onclick="javascript:alert('route undefined')"></input>
-                    <input type="button" value="{{cancelLabel}}" onclick="javascript:alert('route undefined')"></input>
+                    <button type="submit">{{submitLabel}}</button>
                 </div>
             </div>
         </form>
@@ -121,85 +140,101 @@
 
     <script>
         class SignupForm extends Polymer.Element {
+            submitForm() {
+                console.log('submitForm');
+                if (confirm('Confirm submission. Your preferred language is ' + this.preferredLanguage)) {
+                    // Send data to backend via REST POST.
+                    // this.$.main.method = "post"
+                    // Put all the POST variables in the transaction.
+                    // this.$.main.submit();
+                }
+            }
+
             static get is() {
                 return 'signup-form';
             }
 
-            static get config() {
+            static get properties() {
                 return {
-                    properties: {
-                        testMode: {
-                            type: Boolean,
-                            value: false
-                        },
-                        // Members:
-                        title: {
-                            type: String,
-                            value: 'JOIN THE NUSKIN LOYALTY PROGRAM'
-                        },
-                        titleDescription: {
-                            type: String,
-                            value: "It's quick and easy, plus flexible use of points for shipping, product, samples, branded items, experiences, and donations."
-                        },
-                        mobilePhoneLabel: {
-                            type: String,
-                            value: 'Mobile Phone'
-                        },
-                        mobilePhoneFormat: {
-                            type: String,
-                            value: 'xx-xxxxxxxx' // Australian format for kicks
-                        },
-                        mobilePhone: String,
-                        smsOptIn: {
-                            type: Boolean,
-                            value: false
-                        },
-                        smsOptInLabel: {
-                            type: String,
-                            value: 'Yes, contact me through SMS Text messages when needed'
-                        },
-                        birthDay: Date,
-                        birthDayLabel: {
-                            type: String,
-                            value: 'Birthday'
-                        },
-                        birthDayFormat: {
-                            type: String,
-                            value: 'MM/DD/YY'
-                        },
-                        birthDayDescription: {
-                            type: String,
-                            value: '* This is so we can send a gift on your birthday'
-                        },
-                        preferredLanguagesLabel: {
-                            type: String,
-                            value: 'Preferred Language'
-                        },
-                        preferredLanguages: {
-                            type: Array,
-                            value: ['English', 'Vietnamese', 'Chinese', 'French', 'Japanese']
-                        },
-                        preferredLanguage: {
-                            type: String,
-                            value: "",
-                            observer: 'setPreferredLanguage'
-                        },
-                        termsCheckedLabel: {
-                            type: String,
-                            value: "I accept the <a href='#'>Terms of Use</a> and <a href='#'>Privacy Policy</a>"
-                        },
-                        termsChecked: {
-                            type: Boolean,
-                            value: false
-                        },
-                        submitLabel: {
-                            type: String,
-                            value: 'JOIN NOW'
-                        },
-                        cancelLabel: {
-                            type: String,
-                            value: 'CANCEL'
-                        }
+                    testMode: {
+                        type: Boolean,
+                        value: false
+                    },
+                    firstName: {
+                        type: String
+                    },
+                    lastName: {
+                        type: String
+                    },
+                    age: {
+                        type: Number
+                    },
+                    title: {
+                        type: String,
+                        value: 'JOIN THE PREFERRED MEMBER CLUB'
+                    },
+                    titleDescription: {
+                        type: String,
+                        value: "It's quick and easy, and there are some really neat perks included!"
+                    },
+                    mobilePhoneLabel: {
+                        type: String,
+                        value: 'Mobile Phone'
+                    },
+                    mobilePhoneFormat: {
+                        type: String,
+                        value: 'xx-xxxxxxxx' // Australian format for kicks
+                    },
+                    mobilePhone: String,
+                    smsOptIn: {
+                        type: Boolean,
+                        value: false
+                    },
+                    smsOptInLabel: {
+                        type: String,
+                        value: 'Yes, contact me through SMS Text messages when needed'
+                    },
+                    birthDay: Date,
+                    birthDayLabel: {
+                        type: String,
+                        value: 'Birthday'
+                    },
+                    birthDayFormat: {
+                        type: String,
+                        value: 'MM/DD/YY'
+                    },
+                    birthDayDescription: {
+                        type: String,
+                        value: '* This is so we can send a gift on your birthday'
+                    },
+                    preferredLanguagesLabel: {
+                        type: String,
+                        value: 'Preferred Language'
+                    },
+                    preferredLanguages: {
+                        type: Array,
+                        value: ['English', 'Vietnamese', 'Chinese', 'French', 'Japanese']
+                    },
+                    preferredLanguage: {
+                        type: String,
+                        value: "English",
+                        observer: 'setPreferredLanguage'
+                    },
+                    termsCheckedLabel: {
+                        type: String,
+                        value: "I accept the <a href='#'>Terms of Use</a> and <a href='#'>Privacy Policy</a>"
+                    },
+                    termsChecked: {
+                        type: Boolean,
+                        value: false
+                    },
+                    submitLabel: {
+                        type: String,
+                        value: 'JOIN NOW'
+                    },
+                    cancelLabel: {
+                        type: String,
+                        value: 'CANCEL'
                     }
                 }
             }
@@ -208,8 +243,8 @@
                 super();
             }
 
-            ready(properties) {
-                super.ready();
+            init(properties) {
+                console.log('init');
                 if (!properties) return;
                 // If the properties are defined set them else unset them.
                 this.testMode = properties.testMode || false;
@@ -227,8 +262,14 @@
                 this.preferredLanguagesLabel = properties.preferredLanguagesLabel || this.preferredLanguagesLabel;
 
                 if (properties.preferredLanguages && typeof properties.preferredLanguages === 'string') {
-                    let preferredLanguages = properties.preferredLanguages;
-                    this.preferredLanguages = preferredLanguages.split(",");
+                    let preferredLanguages = properties.preferredLanguages.split(",");
+                    if (preferredLanguages.length > 0) {
+                        // Clear any previously stored values:
+                        this.set('preferredLanguages', []);
+                        preferredLanguages.forEach((e) => {
+                            this.push('preferredLanguages', e);
+                        });
+                    }
                 }
 
                 this.preferredLanguage = properties.preferredLanguage || this.preferredLanguage;
@@ -238,12 +279,16 @@
                 this.cancelLabel = properties.cancelLabel || this.cancelLabel;
             }
 
-            setPreferredLanguage(preferredLanguage) {
-                if (preferredLanguage) {
-                    this.preferredLanguage = preferredLanguage;
-                }
+            ready() {
+                super.ready();
+                console.log(this.preferredLanguages);
+                console.log('ready');
             }
 
+            setPreferredLanguage(newValue, oldValue) {
+                this.preferredLanguage = newValue;
+                this.set('preferredLanguage', newValue);
+            };
         }
 
         customElements.define(SignupForm.is, SignupForm);
